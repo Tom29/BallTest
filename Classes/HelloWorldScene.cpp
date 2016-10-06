@@ -140,6 +140,15 @@ void HelloWorld::update(float delta)
 
 void HelloWorld::menuMoveBallsCallback(Ref* pSender)
 {
+    const auto visibleSize = Director::getInstance()->getVisibleSize();
+    const auto r1 = 100.f;
+    const auto r2 = 100.f;
+
+    player1->setPosition(Vec2(visibleSize.width/2.f, r1+50.f));
+    player2->setPosition(Vec2(visibleSize.width/2.f-2*r2-150, r2+50.f));
+}
+
+void HelloWorld::onTouchesBegan(const std::vector<Touch*>& touches, Event *unused_event) {
     CCLOG("start moving balls");
     //move player1
     //moveToWithVelocity(player1, -40.f, 300.f);
@@ -149,4 +158,12 @@ void HelloWorld::menuMoveBallsCallback(Ref* pSender)
     //moveToWithVelocity(player2, 0.f, 200.f);
     //player2->getPhysicsBody()->setVelocity(Vec2(100,-10));
 }
+void HelloWorld::onEnter() {
+    Layer::onEnter();
+    // touch event listener
+    auto eventListener = EventListenerTouchAllAtOnce::create();
+    eventListener->onTouchesBegan = CC_CALLBACK_2(HelloWorld::onTouchesBegan, this);
+    
+    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(eventListener, this);
 
+}
