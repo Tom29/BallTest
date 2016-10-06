@@ -75,7 +75,7 @@ bool HelloWorld::init()
     this->addChild(menu, 1);
     
     //creating screen box
-    auto pStaticBoxBody = PhysicsBody::createEdgeBox(visibleSize, PhysicsMaterial(0.f, 0.5f, 0.f), 2.f);
+    auto pStaticBoxBody = PhysicsBody::createEdgeBox(visibleSize, PhysicsMaterial(PHYSICS_INFINITY, 0.5f, PHYSICS_INFINITY), 2.f);
     pStaticBoxBody->setMoment(PHYSICS_INFINITY);
     pStaticBoxBody->setMass(PHYSICS_INFINITY);
     pStaticBoxBody->setDynamic(false);
@@ -85,10 +85,11 @@ bool HelloWorld::init()
     auto createBall = [](float radius, const PhysicsMaterial& material = PHYSICSBODY_MATERIAL_DEFAULT) -> Node* {
         auto ballNode = Node::create();
         ballNode->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        auto ballBody = PhysicsBody::createCircle(radius, material);
+        auto ballBody = PhysicsBody::createCircle(radius, PHYSICSBODY_MATERIAL_DEFAULT);
+        //auto ballBody = PhysicsBody::createEdgeBox(Size(radius*2, radius*2),material);
         ballBody->setGroup(kBallCollisionGroup);
-        ballBody->setGravityEnable(false);
-        //ballBody->setRotationEnable(false);
+        ballBody->setRotationEnable(false);
+        ballBody->setDynamic(true);
         ballNode->setPhysicsBody(ballBody);
         return ballNode;
     };
@@ -106,7 +107,7 @@ bool HelloWorld::init()
         //create player2
         const auto r2 = 100.f;
         player2 = createBall(r2, PhysicsMaterial(0.f, 0.5f, 0.f));
-        player2->setPosition(Vec2(visibleSize.width/2.f-2*r2-5, r2+50.f));
+        player2->setPosition(Vec2(visibleSize.width/2.f-2*r2-150, r2+50.f));
         this->addChild(player2);
         player2->getPhysicsBody()->setLinearDamping(0.3f);
     }
@@ -125,7 +126,8 @@ void HelloWorld::update(float delta)
         v1.y > MV || v1.y < -MV) {
     } else if(v1 != Vec2(0,0)) {
         player1->getPhysicsBody()->setVelocity(Vec2(0,0));
-        CCLOG("sx 1 : %f %f",v1.x,v1.y);
+        CCLOG("sx 1 : %f %f",player1->getPosition().x,player1->getPosition().y);
+        MessageBox((std::to_string(player1->getPosition().x) + " " + std::to_string(player1->getPosition().y)).c_str(), "Competitor shot at");
     }
     
     if (v2.x > MV || v2.x < -MV ||
@@ -141,10 +143,10 @@ void HelloWorld::menuMoveBallsCallback(Ref* pSender)
     CCLOG("start moving balls");
     //move player1
     //moveToWithVelocity(player1, -40.f, 300.f);
-    player1->getPhysicsBody()->setVelocity(Vec2(100,-10));
+    player1->getPhysicsBody()->setVelocity(Vec2(100,500));
     
     //move player2
     //moveToWithVelocity(player2, 0.f, 200.f);
-    player2->getPhysicsBody()->setVelocity(Vec2(100,-10));
+    //player2->getPhysicsBody()->setVelocity(Vec2(100,-10));
 }
 
